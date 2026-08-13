@@ -1,0 +1,25 @@
+{
+  "name": "@apon-air/lib",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*"
+  },
+  "scripts": {
+    "lint": "echo 'noop'",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .turbo node_modules"
+  },
+  "dependencies": {
+    "cloudinary": "^2.5.0",
+    "resend": "^4.1.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@apon-air/config": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}

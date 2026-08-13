@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+dist/
+turbo/
+.turbo/
+*.tsbuildinfo
+
+# Environment
+.env
+.env*.local
+.env*.development
+.env*.production
+
+# MongoDB local data
+.mongodb/
+
+# Runtime uploads
+public/uploads/
+**/public/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Misc
+.DS_Store
+coverage/
+.vercel/
+.idea/
+.vscode/

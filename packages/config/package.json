@@ -1,0 +1,17 @@
+{
+  "name": "@apon-air/config",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    "./eslint": "./src/eslint.ts",
+    "./typescript": "./src/typescript.json"
+  },
+  "scripts": {
+    "lint": "echo 'noop'",
+    "typecheck": "echo 'noop'",
+    "clean": "rm -rf .turbo node_modules"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}
