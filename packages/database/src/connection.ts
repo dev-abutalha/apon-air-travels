@@ -29,8 +29,8 @@ export async function connectDB() {
   }
 
   const p = mongoose.connect(MONGODB_URI, {
-    serverSelectionTimeoutMS: 5000,
-    connectTimeoutMS: 5000,
+    serverSelectionTimeoutMS: 15000,
+    connectTimeoutMS: 15000,
     autoSelectFamily: false,
   });
   global._mongoose = { conn: mongoose.connection, promise: p };
