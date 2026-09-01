@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { Save, Loader2, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import ImagePicker from '@/components/image-picker';
+import { useToast } from '@/components/toaster';
 
 interface NavItem {
   label: string;
@@ -16,6 +17,7 @@ const emptyNav: NavItem = { label: '', href: '', order: 0, children: [] };
 
 export default function SettingsPage() {
   const qc = useQueryClient();
+  const { toast } = useToast();
   const [form, setForm] = useState<any>({
     siteName: '',
     tagline: '',
@@ -73,7 +75,10 @@ export default function SettingsPage() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['settings'] });
-      alert('Settings saved');
+      toast('Settings saved successfully');
+    },
+    onError: () => {
+      toast('Failed to save settings', 'error');
     },
   });
 

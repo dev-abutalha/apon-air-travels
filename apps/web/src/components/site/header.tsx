@@ -52,7 +52,7 @@ export function Header({ nav, siteName, logo, darkBackgroundLogo, contactPhone, 
         <Link href="/" className="flex items-center gap-2.5">
           {activeLogo?.url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={activeLogo.url} alt={activeLogo.alt || siteName} className="h-14 w-auto max-w-[230px] object-contain object-left" />
+            <img src={activeLogo.url} alt={activeLogo.alt || siteName} className="h-14 w-auto max-w-[170px] object-contain object-left" />
           ) : (
             <>
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-yellow-400 text-white shadow">

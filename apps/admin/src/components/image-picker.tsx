@@ -2,7 +2,8 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
-import { ImagePlus, Upload, X, Check } from 'lucide-react';
+import { ImagePlus, Upload, X, Trash2 } from 'lucide-react';
+import { useToast } from '@/components/toaster';
 
 interface Props {
   label: string;
@@ -12,9 +13,9 @@ interface Props {
 
 export default function ImagePicker({ label, value, onChange }: Props) {
   const qc = useQueryClient();
+  const { toast } = useToast();
   const input = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
-  const [preview, setPreview] = useState<any>(null);
 
   const { data } = useQuery({
     queryKey: ['media'],
@@ -38,6 +39,24 @@ export default function ImagePicker({ label, value, onChange }: Props) {
       qc.invalidateQueries({ queryKey: ['media'] });
       onChange(m.url);
       setOpen(false);
+      toast('Image uploaded successfully');
+    },
+    onError: () => {
+      toast('Upload failed', 'error');
+    },
+  });
+
+  const del = useMutation({
+    mutationFn: async (id: string) => {
+      const r = await fetch(`/api/media/${id}`, { method: 'DELETE' });
+      if (!r.ok) throw new Error();
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['media'] });
+      toast('Image deleted');
+    },
+    onError: () => {
+      toast('Failed to delete image', 'error');
     },
   });
 
@@ -122,44 +141,34 @@ export default function ImagePicker({ label, value, onChange }: Props) {
             ) : (
               <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
                 {data.map((m: any) => (
-                  <button
-                    key={m._id}
-                    type="button"
-                    onClick={() => setPreview(m)}
-                    className={`overflow-hidden rounded-lg border bg-muted transition ${value === m.url ? 'ring-2 ring-blue-600' : 'hover:ring-2 hover:ring-blue-300'}`}
-                  >
-                    <div className="aspect-square">
+                  <div key={m._id} className={`group relative overflow-hidden rounded-lg border bg-muted transition ${value === m.url ? 'ring-2 ring-blue-600' : 'hover:ring-2 hover:ring-blue-300'}`}>
+                    <button
+                      type="button"
+                      onClick={() => pick(m.url)}
+                      className="aspect-square block w-full"
+                      title="Select image"
+                    >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={m.url} alt={m.alt || ''} className="h-full w-full object-cover" />
-                    </div>
-                  </button>
+                    </button>
+                    {value === m.url && (
+                      <span className="absolute left-1 top-1 rounded-full bg-blue-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                        Selected
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => del.mutate(m._id)}
+                      disabled={del.isPending}
+                      className="absolute bottom-1 right-1 flex h-7 w-7 items-center justify-center rounded-md bg-red-600 text-white opacity-0 transition-opacity hover:bg-red-700 group-hover:opacity-100 disabled:opacity-50"
+                      title="Delete image"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
-          </div>
-        </div>
-      )}
-
-      {preview && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={() => setPreview(null)}>
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-xl bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between border-b p-4">
-              <div className="min-w-0">
-                <p className="truncate font-semibold text-gray-900">{preview.filename || preview.alt || 'Image'}</p>
-                {preview.mimeType && <p className="text-xs text-gray-500">{preview.mimeType} · {Math.round(preview.size / 1024)} KB</p>}
-              </div>
-              <button onClick={() => setPreview(null)} className="rounded p-1.5 hover:bg-gray-100"><X className="h-5 w-5" /></button>
-            </div>
-            <div className="flex max-h-[60vh] items-center justify-center bg-black/5">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={preview.url} alt={preview.alt || ''} className="max-h-[60vh] w-full object-contain" />
-            </div>
-            <div className="flex items-center justify-end gap-2 border-t p-4">
-              <button onClick={() => setPreview(null)} className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-accent">Cancel</button>
-              <button onClick={() => pick(preview.url)} className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
-                <Check className="h-4 w-4" /> Select this image
-              </button>
-            </div>
           </div>
         </div>
       )}

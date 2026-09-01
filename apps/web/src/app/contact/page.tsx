@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { PageBanner } from '@/components/site/page-banner';
 import { ContactForm } from '@/features/contact/contact-form';
-import { getSettings, getOffices } from '@/lib/data';
+import { getSettings } from '@/lib/data';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Contact Us' };
 
 export default async function ContactPage() {
-  const [settings, offices] = await Promise.all([getSettings(), getOffices()]);
+  const settings = await getSettings();
 
   return (
     <>
@@ -68,33 +68,6 @@ export default async function ContactPage() {
                 </div>
               )}
             </div>
-
-            {offices.length > 0 && (
-              <div className="mt-8">
-                <h3 className="mb-4 text-lg font-semibold text-slate-900">Our Offices</h3>
-                <div className="space-y-4">
-                  {offices.map((office: any) => (
-                    <div key={office._id} className="rounded-xl border p-5">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-slate-900">{office.branch}</h4>
-                        {office.isHeadOffice && (
-                          <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
-                            Head Office
-                          </span>
-                        )}
-                      </div>
-                      <p className="mt-2 text-sm text-slate-600">
-                        {office.address.street}, {office.address.city}, {office.address.country}
-                      </p>
-                      <div className="mt-2 flex flex-wrap gap-4 text-sm text-slate-600">
-                        <a href={`tel:${office.phone}`} className="hover:text-blue-700">{office.phone}</a>
-                        <a href={`mailto:${office.email}`} className="hover:text-blue-700">{office.email}</a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </section>

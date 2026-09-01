@@ -31,7 +31,7 @@ export function Footer({ settings }: { settings: Settings }) {
         <div className="md:col-span-2">
           {footerLogo?.url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={footerLogo.url} alt={footerLogo.alt || settings.siteName} className="mb-3 h-14 w-auto max-w-[230px] object-contain object-left" />
+            <img src={footerLogo.url} alt={footerLogo.alt || settings.siteName} className="mb-3 h-14 w-auto max-w-[170px] object-contain object-left" />
           ) : <h3 className="mb-3 text-lg font-extrabold text-white">{settings.siteName}</h3>}
           <p className="mb-4 text-sm leading-relaxed">{settings.footerText}</p>
           <div className="flex items-center gap-3">
@@ -60,7 +60,7 @@ export function Footer({ settings }: { settings: Settings }) {
         <div>
           <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">Quick Links</h4>
           <ul className="space-y-2 text-sm">
-            {nav.map((item) => (
+            {nav.slice(0, 4).map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="hover:text-white">
                   {item.label}
