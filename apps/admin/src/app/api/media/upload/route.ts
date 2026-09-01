@@ -1,14 +1,7 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { Media } from '@apon-air/database';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
-
-// Public-site content is selected in the Admin app but rendered by the Web app.
-// Keep a local copy in both public folders so the stored `/uploads/...` URL works
-// from either Next.js application during local/self-hosted deployments.
-const ADMIN_UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
-const WEB_UPLOAD_DIR = path.resolve(process.cwd(), '../web/public/uploads');
+import { uploadImage } from '@apon-air/lib';
 
 export async function POST(request: Request) {
   try {
@@ -16,22 +9,16 @@ export async function POST(request: Request) {
     const file = formData.get('file') as File | null;
     if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 });
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const base64 = buffer.toString('base64');
+    const dataUri = `data:${file.type};base64,${base64}`;
 
-    await Promise.all([
-      mkdir(ADMIN_UPLOAD_DIR, { recursive: true }),
-      mkdir(WEB_UPLOAD_DIR, { recursive: true }),
-    ]);
-    await Promise.all([
-      writeFile(path.join(ADMIN_UPLOAD_DIR, filename), buffer),
-      writeFile(path.join(WEB_UPLOAD_DIR, filename), buffer),
-    ]);
+    const result = await uploadImage(dataUri, 'media');
 
     await connectDB();
     const media = await Media.create({
-      url: `/uploads/${filename}`,
+      url: result.url,
+      publicId: result.publicId,
       filename: file.name,
       mimeType: file.type,
       size: file.size,
