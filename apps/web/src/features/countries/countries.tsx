@@ -34,10 +34,10 @@ export function CountriesSection({ countries }: { countries: CountryCard[] }) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#062f5f]/45 via-transparent to-transparent" />
               </div>
-              <div className="relative p-5"><div className="absolute -top-7 left-5 flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-white shadow-md">
+              <div className="relative p-5"><div className="absolute -top-7 left-5 flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg ">
                 {country.flag?.url ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={country.flag.url} alt={country.name} className="h-full w-full object-cover" />
+                  <img src={country.flag.url} alt={country.name} className="h-full w-full object-contain" />
                 ) : (
                   '🌐'
                 )}
